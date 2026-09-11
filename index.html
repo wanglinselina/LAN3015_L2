@@ -3,154 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>準備考察：內地職場實務與文化</title>
+    <title>課次二：準備考察 互動學習平台</title>
     <style>
-        :root { --primary: #1a365d; --secondary: #b45309; --bg: #f8fafc; --white: #ffffff; }
-        body { font-family: 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; }
-        .app-container { max-width: 800px; margin: 0 auto; background: var(--white); border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        :root { --primary: #1a365d; --secondary: #b45309; --bg: #f8fafc; --white: #ffffff; --text: #334155; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; padding: 10px; color: var(--text); line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--white); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
         .header { background: var(--primary); color: var(--white); padding: 20px; text-align: center; }
         .header h1 { margin: 0; font-size: 1.5em; }
         
         /* Tabs */
         .tabs { display: flex; flex-wrap: wrap; background: #e2e8f0; }
-        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.3s; min-width: 100px; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; min-width: 120px; }
         .tab.active { background: var(--white); color: var(--primary); border-bottom: 3px solid var(--secondary); }
         
         /* Content Sections */
         .section { display: none; padding: 25px; }
         .section.active { display: block; }
-        h2 { color: var(--secondary); margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
-        .instruction { color: #64748b; margin-bottom: 20px; font-size: 0.95em; }
+        h2 { color: var(--secondary); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0; }
+        h3 { color: var(--primary); margin-top: 20px; }
         
-        /* Activity 1 & 4: Click to Match/Sort */
-        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .item-btn { display: block; width: 100%; padding: 12px; margin-bottom: 10px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 1em; transition: 0.2s; }
-        .item-btn.selected { background: #dbeafe; border-color: #3b82f6; }
-        .item-btn.matched { background: #dcfce7; border-color: #22c55e; color: #166534; pointer-events: none; }
-        .item-btn.disabled { opacity: 0.5; pointer-events: none; }
+        /* Dialogue Box */
+        .dialogue-box { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; height: 300px; overflow-y: auto; border: 1px solid #cbd5e1; }
+        .msg { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .msg.a .name { color: #2563eb; font-weight: bold; margin-bottom: 2px; }
+        .msg.b .name { color: #16a34a; font-weight: bold; margin-bottom: 2px; }
+        .msg .text { background: white; padding: 10px; border-radius: 5px; border: 1px solid #e2e8f0; display: inline-block; max-width: 90%; }
         
-        /* Activity 2: Flashcards */
-        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .flashcard { background: transparent; perspective: 1000px; height: 120px; cursor: pointer; }
-        .flashcard-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        /* Vocabulary Tables */
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .vocab-item { background: #f8fafc; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 0.9em; }
+        
+        /* Interactive Buttons & Quizzes */
+        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn { display: block; width: 100%; padding: 12px; margin-bottom: 10px; background: white; border: 2px solid #cbd5e1; border-radius: 6px; cursor: pointer; transition: 0.2s; text-align: left; }
+        .btn:hover { background: #f1f5f9; }
+        .btn.selected { background: #dbeafe; border-color: #3b82f6; }
+        .btn.matched { background: #dcfce7; border-color: #22c55e; color: #166534; pointer-events: none; }
+        
+        /* Flashcards */
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .flashcard { perspective: 1000px; height: 100px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.5s; transform-style: preserve-3d; }
         .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
-        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 10px; box-sizing: border-box; font-weight: bold; }
-        .flashcard-front { background: var(--primary); color: white; }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; border: 1px solid #cbd5e1;}
+        .flashcard-front { background: #eff6ff; color: var(--primary); }
         .flashcard-back { background: var(--secondary); color: white; transform: rotateY(180deg); }
         
-        /* Activity 3 & 5: Quiz */
-        .quiz-question { margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid var(--primary); }
-        .quiz-option { display: block; width: 100%; text-align: left; padding: 12px; margin-bottom: 8px; background: white; border: 1px solid #cbd5e1; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        .quiz-option:hover { background: #f1f5f9; }
-        .feedback { margin-top: 10px; padding: 10px; border-radius: 5px; display: none; font-weight: bold; }
+        /* Tips Box */
+        .tips-box { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        
+        /* Feedback */
+        .feedback { padding: 10px; border-radius: 5px; display: none; font-weight: bold; margin-top: 10px; }
         .feedback.success { background: #dcfce7; color: #166534; display: block; }
         .feedback.error { background: #fee2e2; color: #991b1b; display: block; }
-
-        /* Sort Area */
-        .sort-area { min-height: 50px; background: #e2e8f0; border-radius: 6px; padding: 10px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 5px;}
-        .sort-item { background: white; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
         
-        button.action-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        .sort-area { min-height: 50px; background: #e2e8f0; border-radius: 6px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px;}
+        .sort-item { background: white; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1; font-weight: bold; }
+        .action-btn { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="container">
     <div class="header">
-        <h1>課次二：準備考察互動練習</h1>
+        <h1>LAN3005 準備考察 互動學習</h1>
     </div>
     
     <div class="tabs">
-        <div class="tab active" onclick="switchTab(1)">1. 行政區配對</div>
-        <div class="tab" onclick="switchTab(2)">2. 職場詞彙卡</div>
-        <div class="tab" onclick="switchTab(3)">3. 交通標識</div>
-        <div class="tab" onclick="switchTab(4)">4. 職位排序</div>
-        <div class="tab" onclick="switchTab(5)">5. 稱呼情境</div>
+        <div class="tab active" onclick="switchTab(1)">活動一：行政區</div>
+        <div class="tab" onclick="switchTab(2)">活動二：住宿安排</div>
+        <div class="tab" onclick="switchTab(3)">活動三：交通與地鐵</div>
+        <div class="tab" onclick="switchTab(4)">活動四：社交與稱呼</div>
     </div>
 
-    <!-- 活動一：配對遊戲 -->
+    <!-- ================= 活動一：行政區 ================= -->
     <div id="sec1" class="section active">
-        <h2>活動一：中國行政區簡稱配對</h2>
-        <p class="instruction">玩法：先點擊左側的「簡稱」，再點擊右側對應的「省/市」。</p>
+        <h2>活動一：導入（考考你）</h2>
+        <p>你知道以下簡稱代表哪個省/市/自治區嗎？請先點擊左側簡稱，再點擊右側對應地名進行配對。</p>
         <div class="grid-2col">
             <div id="match-left"></div>
             <div id="match-right"></div>
         </div>
-        <div id="match-feedback" class="feedback"></div>
+        <div id="fb-match" class="feedback"></div>
     </div>
 
-    <!-- 活動二：翻轉記憶卡 -->
+    <!-- ================= 活動二：商務住宿 ================= -->
     <div id="sec2" class="section">
-        <h2>活動二：粵普對譯記憶卡</h2>
-        <p class="instruction">玩法：香港職場中英夾雜的詞彙，在內地怎麼說？點擊卡片翻看答案。</p>
-        <div class="flashcard-grid" id="flashcards-container"></div>
-    </div>
+        <h2>活動二：考察準備──商務住宿</h2>
+        
+        <h3>2.1 住宿安排 (情境對話)</h3>
+        <p>芝婷向永新請教內地住宿的種類與訂房方法：</p>
+        <div class="dialogue-box">
+            <div class="msg a"><span class="name">芝婷：</span><span class="text">永新，我們要到內地進行商務考察，該怎樣選擇酒店呢？</span></div>
+            <div class="msg b"><span class="name">永新：</span><span class="text">內地酒店大致可分為「連鎖酒店」、「獨家經營的酒店」和「短租套房」三種。</span></div>
+            <div class="msg a"><span class="name">芝婷：</span><span class="text">有甚麼分別嗎？</span></div>
+            <div class="msg b"><span class="name">永新：</span><span class="text">「連鎖酒店」是集團式經營，設備、裝潢、服務都有標準，價格合理。而「獨家經營」沒有集團管，服務水平難免良莠不齊。</span></div>
+            <div class="msg a"><span class="name">芝婷：</span><span class="text">那「短租套房」呢？</span></div>
+            <div class="msg b"><span class="name">永新：</span><span class="text">租期彈性，有客廳廚房，家具應俱全。但要付雜費，需到公安機關登記證件，且發生意外不一定能向保險公司索賠。</span></div>
+            <div class="msg a"><span class="name">芝婷：</span><span class="text">那還是連鎖酒店省事。要通過旅行社訂嗎？</span></div>
+            <div class="msg b"><span class="name">永新：</span><span class="text">不一定。現在通過專門訂房網站輸入資料，收到確認短信或電郵，訂房手續就完成了，非常方便。</span></div>
+        </div>
 
-    <!-- 活動三：看圖猜標識 -->
-    <div id="sec3" class="section">
-        <h2>活動三：北京地鐵標識猜一猜</h2>
-        <p class="instruction">玩法：閱讀標識文字，選出正確含義。</p>
-        <div class="quiz-question">
-            <h3 style="color:#dc2626;">🚷 【禁止跳下】 / 🚇 【禁止入洞】</h3>
-            <p>這兩個北京地鐵常見標識，主要警告乘客什麼？</p>
-            <button class="quiz-option" onclick="checkQ3(this, false)">A. 車站內禁止奔跑與隨地亂丟垃圾</button>
-            <button class="quiz-option" onclick="checkQ3(this, true)">B. 嚴禁跳下月台軌道或進入隧道內</button>
-            <button class="quiz-option" onclick="checkQ3(this, false)">C. 禁止攜帶易燃物品進入地鐵站</button>
-            <div id="fb-q3" class="feedback"></div>
+        <h3>2.2 常用詞語</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">賓館 / 飯店</div>
+            <div class="vocab-item">商務型酒店</div>
+            <div class="vocab-item">青年旅舍</div>
+            <div class="vocab-item">公寓式酒店</div>
+            <div class="vocab-item">標準間 (標間)</div>
+            <div class="vocab-item">單人間 / 套間</div>
+            <div class="vocab-item">行政套房</div>
+            <div class="vocab-item">前台 / 接待台</div>
+            <div class="vocab-item">登記入住 / 退房</div>
+            <div class="vocab-item">無預訂散客</div>
+        </div>
+
+        <h3>2.3 粵普對譯練習 (翻轉記憶卡)</h3>
+        <p>香港人說話喜歡中英夾雜。點擊卡片查看普通話該怎麼說：</p>
+        <div class="flashcard-grid" id="flashcards-container"></div>
+
+        <h3>2.4 溫馨提示</h3>
+        <div class="tips-box">
+            <ul>
+                <li>訂雙人房時，注意提供的是「兩張單人床」還是「一張雙人床」。</li>
+                <li>出差需租用會議室，應先向酒店查詢設備再確認訂房。</li>
+                <li>登記入住時需出示回鄉證，登記完畢<b>要取回證件</b>，不要交給酒店保管。</li>
+                <li>退房時檢查房間，避免落下東西或損壞物品引起誤會。</li>
+            </ul>
         </div>
     </div>
 
-    <!-- 活動四：職位排序 -->
+    <!-- ================= 活動三：交通 ================= -->
+    <div id="sec3" class="section">
+        <h2>活動三：考察準備──交通</h2>
+        
+        <h3>3.1 猜一猜 (交通標識)</h3>
+        <p>請選出以下北京地鐵標識的正確含義：</p>
+        <div style="background:#f1f5f9; padding:15px; border-radius:5px; margin-bottom:15px;">
+            <p><strong>Q: 標識「禁止跳下」、「禁止入洞」的意思是？</strong></p>
+            <button class="btn" onclick="checkQ(this, false, 'fb-sign')">A. 禁止在車廂內跳躍與進入駕駛室</button>
+            <button class="btn" onclick="checkQ(this, true, 'fb-sign')">B. 嚴禁跳下月台軌道與進入隧道內</button>
+            <div id="fb-sign" class="feedback"></div>
+        </div>
+
+        <h3>3.2 對話練習：北京的交通與地鐵</h3>
+        <div class="dialogue-box">
+            <div class="msg a"><span class="name">芝婷：</span><span class="text">永新，北京市內交通怎麼樣？</span></div>
+            <div class="msg b"><span class="name">永新：</span><span class="text">北京老城區是棋盤式，週邊是環形加放射性（二環、三環...）。這導致上下班時段嚴重堵車。市政府實行了機動車限制，配合公交和地鐵低票價。</span></div>
+            <div class="msg b"><span class="name">永新：</span><span class="text">坐公交可打 96166 查詢。另外，內地人說的「很近」可能要走30分鐘，跟香港人概念不同！而且汽車方向在左邊，過馬路要小心。</span></div>
+            <div class="msg a"><span class="name">心凌：</span><span class="text">那地鐵票價呢？怎麼付錢？</span></div>
+            <div class="msg b"><span class="name">曉東：</span><span class="text">除了機場線，地鐵是單一票制，每程兩塊。我們不用買單程票，可以用「一卡通」（類似八達通），連去醫院掛號都可以用！月台有屏蔽門和液晶顯示屏報站。</span></div>
+        </div>
+        
+        <div style="background:#f1f5f9; padding:15px; border-radius:5px; margin-bottom:15px;">
+            <p><strong>閱讀測驗：</strong>根據上述對話，若你不熟悉北京公交路線，可以撥打哪支熱線查詢？</p>
+            <button class="btn" onclick="checkQ(this, true, 'fb-read1')">A. 96166</button>
+            <button class="btn" onclick="checkQ(this, false, 'fb-read1')">B. 114</button>
+            <div id="fb-read1" class="feedback"></div>
+        </div>
+
+        <h3>3.3 常用詞語 (交通)</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">出租車 (打的)</div>
+            <div class="vocab-item">公交車</div>
+            <div class="vocab-item">動車 / 高鐵</div>
+            <div class="vocab-item">立交橋 / 高架橋</div>
+            <div class="vocab-item">人行道 (行人路)</div>
+            <div class="vocab-item">人行橫道 (斑馬線)</div>
+            <div class="vocab-item">一卡通 / 儲值票</div>
+            <div class="vocab-item">充值 / 補票</div>
+        </div>
+    </div>
+
+    <!-- ================= 活動四：社交應對 ================= -->
     <div id="sec4" class="section">
-        <h2>活動四：內地常見職位高低排序</h2>
-        <p class="instruction">玩法：請按照職位「由高至低」的順序，依次點擊下方按鈕將其排入清單中。</p>
+        <h2>活動四：商務社交應對及禮儀（一）</h2>
+        
+        <h3>4.1 職位高低排序</h3>
+        <p>請將下列工作職位由高至低排序（點擊下方按鈕加入清單）：</p>
         <div class="sort-area" id="sort-result"></div>
         <div id="sort-options" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-            <button class="item-btn" style="width:auto;" onclick="selectSort('主任', this)">主任</button>
-            <button class="item-btn" style="width:auto;" onclick="selectSort('廠長', this)">廠長</button>
-            <button class="item-btn" style="width:auto;" onclick="selectSort('領班', this)">領班</button>
-            <button class="item-btn" style="width:auto;" onclick="selectSort('副理', this)">副理</button>
-            <button class="item-btn" style="width:auto;" onclick="selectSort('組長', this)">組長</button>
+            <button class="action-btn" style="background:#64748b" onclick="selectSort('主任', this)">主任</button>
+            <button class="action-btn" style="background:#64748b" onclick="selectSort('廠長', this)">廠長</button>
+            <button class="action-btn" style="background:#64748b" onclick="selectSort('領班', this)">領班</button>
+            <button class="action-btn" style="background:#64748b" onclick="selectSort('副理', this)">副理</button>
+            <button class="action-btn" style="background:#64748b" onclick="selectSort('組長', this)">組長</button>
         </div>
         <button class="action-btn" onclick="checkSort()">提交檢查</button>
-        <button class="action-btn" style="background:#64748b;" onclick="resetSort()">重設</button>
+        <button class="action-btn" style="background:#dc2626;" onclick="resetSort()">重設</button>
         <div id="fb-sort" class="feedback"></div>
-    </div>
 
-    <!-- 活動五：稱呼闖關 -->
-    <div id="sec5" class="section">
-        <h2>活動五：商務社交稱呼闖關</h2>
-        <p class="instruction">玩法：根據情境選出最得體的內地職場稱呼方式。</p>
-        
-        <div class="quiz-question">
-            <p><strong>情境 1：</strong>你在晚宴上遇到 B 公司的副總經理黃曉銘，而總經理陳之楓不在一塊兒。你應該怎樣稱呼黃曉銘？</p>
-            <button class="quiz-option" onclick="checkQ5(1, this, false, '答錯了！他可能不喜歡別人注意到他是「副」總經理。')">A. 黃副總經理</button>
-            <button class="quiz-option" onclick="checkQ5(1, this, true, '正確！內地稱呼講求「就高不就低」，總經理不在場時應尊稱黃總經理。')">B. 黃總經理</button>
-            <button class="quiz-option" onclick="checkQ5(1, this, false, '答錯了！商務場合直呼其名顯得不夠尊重。')">C. 曉銘哥</button>
-            <div id="fb-q5-1" class="feedback"></div>
+        <h3>4.2 稱呼的學問 (對話與溫馨提示)</h3>
+        <div class="dialogue-box" style="height:150px;">
+            <div class="msg b"><span class="name">永新：</span><span class="text">在內地傳統單位最好不要用英文名。稱呼上司不能只叫「先生/小姐」，要在頭銜前加姓氏，如「陳總經理」。有技術職稱的可以叫「梁工」，車間的可以叫「李師傅」。</span></div>
+        </div>
+        <div class="tips-box">
+            <ul>
+                <li><strong>就高不就低：</strong>商務交往講求莊重，不要隨便稱兄道弟，也不要用非正式簡稱（如黃局、李處）。</li>
+                <li><strong>「你」與「您」：</strong>跟上司、長輩或初次見面的人，務必用「您」表達敬意。</li>
+            </ul>
         </div>
 
-        <div class="quiz-question">
-            <p><strong>情境 2：</strong>你在酒會上遇到 C 公司的總經理陳炎梅和副總經理王志軍（兩人站在一起）。你應該怎樣稱呼他們？</p>
-            <button class="quiz-option" onclick="checkQ5(2, this, false, '答錯了！這樣會讓正職總經理不高興，且容易混淆。')">A. 兩位總經理好</button>
-            <button class="quiz-option" onclick="checkQ5(2, this, true, '正確！正副職同場時，必須精準區分，以免令「陳總經理」不高興。')">B. 陳總經理、王副總經理</button>
-            <div id="fb-q5-2" class="feedback"></div>
+        <h3>4.4 實戰闖關：填一填</h3>
+        
+        <div style="background:#f1f5f9; padding:15px; border-radius:5px; margin-bottom:15px;">
+            <p><strong>情景 1：</strong>參觀工廠時認識了30歲的工程師「王小明」，你該怎麼稱呼他？</p>
+            <button class="btn" onclick="checkQ(this, false, 'fb-q4-1', '「王師傅」對工程師不太尊重；「小明」太熱情；「小王」是上級叫下級。')">A. 王師傅 / 小明 / 小王</button>
+            <button class="btn" onclick="checkQ(this, true, 'fb-q4-1', '正確！以技術職稱稱呼，或簡稱「王工」。')">B. 王工程師</button>
+            <div id="fb-q4-1" class="feedback"></div>
+        </div>
+
+        <div style="background:#f1f5f9; padding:15px; border-radius:5px; margin-bottom:15px;">
+            <p><strong>情景 2：</strong>晚宴遇到B公司副總經理「黃曉銘」，總經理不在場。</p>
+            <button class="btn" onclick="checkQ(this, false, 'fb-q4-2', '他可能不喜歡別人注意到他是「副」的。')">A. 黃副總經理</button>
+            <button class="btn" onclick="checkQ(this, true, 'fb-q4-2', '正確！就高不就低。')">B. 黃總經理</button>
+            <div id="fb-q4-2" class="feedback"></div>
+        </div>
+
+        <div style="background:#f1f5f9; padding:15px; border-radius:5px; margin-bottom:15px;">
+            <p><strong>情景 3：</strong>酒會上遇到C公司總經理「陳炎梅」和副總經理「王志軍」（兩人站在一起）。</p>
+            <button class="btn" onclick="checkQ(this, true, 'fb-q4-3', '正確！兩人在場時必須區分，以免陳總經理不高興。')">A. 陳總經理 和 王副總經理</button>
+            <button class="btn" onclick="checkQ(this, false, 'fb-q4-3', '錯誤！容易混淆且讓正職不高興。')">B. 兩位總經理</button>
+            <div id="fb-q4-3" class="feedback"></div>
+        </div>
+        
+        <h3>4.5 常見職位詞彙</h3>
+        <div class="vocab-grid">
+            <div class="vocab-item">董事長 / 總裁</div>
+            <div class="vocab-item">總經理 / 副總</div>
+            <div class="vocab-item">廠長 / 主任</div>
+            <div class="vocab-item">工程師 / 設計師</div>
+            <div class="vocab-item">會計 / 出納員</div>
+            <div class="vocab-item">營業員 / 採購員</div>
         </div>
     </div>
 </div>
 
 <script>
-    // Tab Logic
+    // Tab Navigation
     function switchTab(tabId) {
         document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === (tabId - 1)));
         document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === (tabId - 1)));
     }
 
-    // Activity 1 Logic (Match)
+    // Activity 1: Match Game
     const matchData = [
-        { short: '滬', full: '上海市' }, { short: '冀', full: '河北省' },
-        { short: '豫', full: '河南省' }, { short: '湘', full: '湖南省' },
-        { short: '粵', full: '廣東省' }
+        { short: '湘', full: '湖南省' }, { short: '鄂', full: '湖北省' },
+        { short: '冀', full: '河北省' }, { short: '滬', full: '上海市' },
+        { short: '晉', full: '山西省' }, { short: '豫', full: '河南省' },
+        { short: '皖', full: '安徽省' }, { short: '閩', full: '福建省' },
+        { short: '桂', full: '廣西自治區' }, { short: '魯', full: '山東省' }
     ];
     let selectedLeft = null, selectedRight = null;
     
@@ -162,14 +264,14 @@
         
         leftItems.forEach(item => {
             let btn = document.createElement('button');
-            btn.className = 'item-btn left-btn'; btn.innerText = item.short;
+            btn.className = 'btn left-btn'; btn.innerText = item.short; btn.style.textAlign = "center";
             btn.onclick = () => handleMatchClick(btn, 'left', item.full);
             leftDiv.appendChild(btn);
         });
         
         rightItems.forEach(item => {
             let btn = document.createElement('button');
-            btn.className = 'item-btn right-btn'; btn.innerText = item.full;
+            btn.className = 'btn right-btn'; btn.innerText = item.full; btn.style.textAlign = "center";
             btn.onclick = () => handleMatchClick(btn, 'right', item.full);
             rightDiv.appendChild(btn);
         });
@@ -180,69 +282,59 @@
         document.querySelectorAll(`.${side}-btn`).forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         
-        if(side === 'left') { selectedLeft = { btn, value }; } 
-        else { selectedRight = { btn, value }; }
+        if(side === 'left') selectedLeft = { btn, value };
+        else selectedRight = { btn, value };
 
         if(selectedLeft && selectedRight) {
+            let fb = document.getElementById('fb-match');
             if(selectedLeft.value === selectedRight.value) {
-                selectedLeft.btn.classList.add('matched');
-                selectedRight.btn.classList.add('matched');
-                selectedLeft.btn.classList.remove('selected');
-                selectedRight.btn.classList.remove('selected');
-                document.getElementById('match-feedback').className = 'feedback success';
-                document.getElementById('match-feedback').innerText = '配對成功！';
+                selectedLeft.btn.classList.add('matched'); selectedRight.btn.classList.add('matched');
+                fb.className = 'feedback success'; fb.innerText = '配對成功！';
             } else {
-                selectedLeft.btn.classList.remove('selected');
-                selectedRight.btn.classList.remove('selected');
-                document.getElementById('match-feedback').className = 'feedback error';
-                document.getElementById('match-feedback').innerText = '配對錯誤，請重試！';
+                fb.className = 'feedback error'; fb.innerText = '配對錯誤，請重試！';
             }
+            selectedLeft.btn.classList.remove('selected'); selectedRight.btn.classList.remove('selected');
             selectedLeft = null; selectedRight = null;
         }
     }
 
-    // Activity 2 Logic (Flashcards)
+    // Activity 2: Flashcards
     const flashcardData = [
         { q: 'Book房', a: '預訂房間' }, { q: 'Walk-in', a: '無預訂散客' },
         { q: 'Check-in', a: '登記入住' }, { q: 'Check-out', a: '退房' },
-        { q: '畀deposit', a: '預付押金' }, { q: 'Lobby', a: '大堂' }
+        { q: 'Twin bed', a: '兩張單人床' }, { q: 'Double bed', a: '一張雙人床' },
+        { q: 'Lobby', a: '大堂' }, { q: '畀deposit', a: '預付押金' },
+        { q: '畀貼士', a: '給小費' }, { q: 'IDD', a: '國際長途直撥' }
     ];
     function initFlashcards() {
         const container = document.getElementById('flashcards-container');
         flashcardData.forEach(item => {
-            let card = document.createElement('div');
-            card.className = 'flashcard';
-            card.innerHTML = `
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">${item.q}</div>
-                    <div class="flashcard-back">${item.a}</div>
-                </div>`;
+            let card = document.createElement('div'); card.className = 'flashcard';
+            card.innerHTML = `<div class="flashcard-inner"><div class="flashcard-front">${item.q}</div><div class="flashcard-back">${item.a}</div></div>`;
             card.onclick = () => card.classList.toggle('flipped');
             container.appendChild(card);
         });
     }
 
-    // Activity 3 Logic (Quiz)
-    function checkQ3(btn, isCorrect) {
+    // Generic Quiz Checker
+    function checkQ(btn, isCorrect, fbId, msgText = '') {
         let parent = btn.parentElement;
-        parent.querySelectorAll('.quiz-option').forEach(b => b.style.opacity = '0.5');
+        parent.querySelectorAll('.btn').forEach(b => b.style.opacity = '0.5');
         btn.style.opacity = '1';
-        let fb = document.getElementById('fb-q3');
-        if(isCorrect) {
-            fb.className = 'feedback success'; fb.innerText = '正確！北京地鐵嚴禁進入隧道及跳下月台。';
-        } else {
-            fb.className = 'feedback error'; fb.innerText = '答錯了，請再仔細看看標識文字！';
-        }
+        let fb = document.getElementById(fbId);
+        fb.className = isCorrect ? 'feedback success' : 'feedback error';
+        fb.innerText = msgText || (isCorrect ? '答對了！' : '答錯了，請再試一次。');
     }
 
-    // Activity 4 Logic (Sort)
+    // Activity 4: Sort
     let sortArray = [];
+    let sortBtns = [];
     const correctSort = ['廠長', '副理', '主任', '組長', '領班'];
     
     function selectSort(val, btn) {
-        if(btn.classList.contains('disabled')) return;
-        sortArray.push(val);
-        btn.classList.add('disabled');
+        if(btn.style.opacity === '0.3') return;
+        sortArray.push(val); sortBtns.push(btn);
+        btn.style.opacity = '0.3'; btn.style.pointerEvents = 'none';
         renderSortArea();
     }
     
@@ -250,43 +342,25 @@
         const area = document.getElementById('sort-result');
         area.innerHTML = '';
         sortArray.forEach((val, idx) => {
-            let div = document.createElement('div');
-            div.className = 'sort-item';
-            div.innerText = `${idx + 1}. ${val}`;
+            let div = document.createElement('div'); div.className = 'sort-item'; div.innerText = `${idx + 1}. ${val}`;
             area.appendChild(div);
         });
     }
 
     function resetSort() {
-        sortArray = [];
-        renderSortArea();
-        document.querySelectorAll('#sort-options .item-btn').forEach(btn => btn.classList.remove('disabled'));
+        sortArray = []; sortBtns = []; renderSortArea();
+        document.querySelectorAll('#sort-options .action-btn').forEach(b => { b.style.opacity = '1'; b.style.pointerEvents = 'auto'; });
         document.getElementById('fb-sort').style.display = 'none';
     }
 
     function checkSort() {
         let fb = document.getElementById('fb-sort');
-        if(sortArray.length < 5) {
-            fb.className = 'feedback error'; fb.innerText = '請先排完所有職位！'; return;
-        }
+        if(sortArray.length < 5) { fb.className = 'feedback error'; fb.innerText = '請先排完所有選項！'; return; }
         if(JSON.stringify(sortArray) === JSON.stringify(correctSort)) {
-            fb.className = 'feedback success'; fb.innerText = '完全正確！職級由高至低為：廠長 > 副理 > 主任 > 組長 > 領班。';
-        } else {
-            fb.className = 'feedback error'; fb.innerText = '排序有誤，請點擊「重設」再試一次！';
-        }
+            fb.className = 'feedback success'; fb.innerText = '完全正確！(廠長 > 副理 > 主任 > 組長 > 領班)';
+        } else { fb.className = 'feedback error'; fb.innerText = '排序有誤，請重設再試！'; }
     }
 
-    // Activity 5 Logic (Scenario)
-    function checkQ5(qNum, btn, isCorrect, msg) {
-        let parent = btn.parentElement;
-        parent.querySelectorAll('.quiz-option').forEach(b => b.style.opacity = '0.5');
-        btn.style.opacity = '1';
-        let fb = document.getElementById(`fb-q5-${qNum}`);
-        fb.className = isCorrect ? 'feedback success' : 'feedback error';
-        fb.innerText = msg;
-    }
-
-    // Initialize all
     window.onload = () => { initMatch(); initFlashcards(); };
 </script>
 
