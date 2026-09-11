@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>準備考察：內地職場實務與文化</title>
+    <style>
+        :root { --primary: #1a365d; --secondary: #b45309; --bg: #f8fafc; --white: #ffffff; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; }
+        .app-container { max-width: 800px; margin: 0 auto; background: var(--white); border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        .header { background: var(--primary); color: var(--white); padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 1.5em; }
+        
+        /* Tabs */
+        .tabs { display: flex; flex-wrap: wrap; background: #e2e8f0; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; border-bottom: 3px solid transparent; transition: 0.3s; min-width: 100px; }
+        .tab.active { background: var(--white); color: var(--primary); border-bottom: 3px solid var(--secondary); }
+        
+        /* Content Sections */
+        .section { display: none; padding: 25px; }
+        .section.active { display: block; }
+        h2 { color: var(--secondary); margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        .instruction { color: #64748b; margin-bottom: 20px; font-size: 0.95em; }
+        
+        /* Activity 1 & 4: Click to Match/Sort */
+        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .item-btn { display: block; width: 100%; padding: 12px; margin-bottom: 10px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 1em; transition: 0.2s; }
+        .item-btn.selected { background: #dbeafe; border-color: #3b82f6; }
+        .item-btn.matched { background: #dcfce7; border-color: #22c55e; color: #166534; pointer-events: none; }
+        .item-btn.disabled { opacity: 0.5; pointer-events: none; }
+        
+        /* Activity 2: Flashcards */
+        .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .flashcard { background: transparent; perspective: 1000px; height: 120px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 10px; box-sizing: border-box; font-weight: bold; }
+        .flashcard-front { background: var(--primary); color: white; }
+        .flashcard-back { background: var(--secondary); color: white; transform: rotateY(180deg); }
+        
+        /* Activity 3 & 5: Quiz */
+        .quiz-question { margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border-left: 4px solid var(--primary); }
+        .quiz-option { display: block; width: 100%; text-align: left; padding: 12px; margin-bottom: 8px; background: white; border: 1px solid #cbd5e1; border-radius: 5px; cursor: pointer; transition: 0.2s; }
+        .quiz-option:hover { background: #f1f5f9; }
+        .feedback { margin-top: 10px; padding: 10px; border-radius: 5px; display: none; font-weight: bold; }
+        .feedback.success { background: #dcfce7; color: #166534; display: block; }
+        .feedback.error { background: #fee2e2; color: #991b1b; display: block; }
+
+        /* Sort Area */
+        .sort-area { min-height: 50px; background: #e2e8f0; border-radius: 6px; padding: 10px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 5px;}
+        .sort-item { background: white; padding: 10px; border-radius: 4px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
+        
+        button.action-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1>課次二：準備考察互動練習</h1>
+    </div>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(1)">1. 行政區配對</div>
+        <div class="tab" onclick="switchTab(2)">2. 職場詞彙卡</div>
+        <div class="tab" onclick="switchTab(3)">3. 交通標識</div>
+        <div class="tab" onclick="switchTab(4)">4. 職位排序</div>
+        <div class="tab" onclick="switchTab(5)">5. 稱呼情境</div>
+    </div>
+
+    <!-- 活動一：配對遊戲 -->
+    <div id="sec1" class="section active">
+        <h2>活動一：中國行政區簡稱配對</h2>
+        <p class="instruction">玩法：先點擊左側的「簡稱」，再點擊右側對應的「省/市」。</p>
+        <div class="grid-2col">
+            <div id="match-left"></div>
+            <div id="match-right"></div>
+        </div>
+        <div id="match-feedback" class="feedback"></div>
+    </div>
+
+    <!-- 活動二：翻轉記憶卡 -->
+    <div id="sec2" class="section">
+        <h2>活動二：粵普對譯記憶卡</h2>
+        <p class="instruction">玩法：香港職場中英夾雜的詞彙，在內地怎麼說？點擊卡片翻看答案。</p>
+        <div class="flashcard-grid" id="flashcards-container"></div>
+    </div>
+
+    <!-- 活動三：看圖猜標識 -->
+    <div id="sec3" class="section">
+        <h2>活動三：北京地鐵標識猜一猜</h2>
+        <p class="instruction">玩法：閱讀標識文字，選出正確含義。</p>
+        <div class="quiz-question">
+            <h3 style="color:#dc2626;">🚷 【禁止跳下】 / 🚇 【禁止入洞】</h3>
+            <p>這兩個北京地鐵常見標識，主要警告乘客什麼？</p>
+            <button class="quiz-option" onclick="checkQ3(this, false)">A. 車站內禁止奔跑與隨地亂丟垃圾</button>
+            <button class="quiz-option" onclick="checkQ3(this, true)">B. 嚴禁跳下月台軌道或進入隧道內</button>
+            <button class="quiz-option" onclick="checkQ3(this, false)">C. 禁止攜帶易燃物品進入地鐵站</button>
+            <div id="fb-q3" class="feedback"></div>
+        </div>
+    </div>
+
+    <!-- 活動四：職位排序 -->
+    <div id="sec4" class="section">
+        <h2>活動四：內地常見職位高低排序</h2>
+        <p class="instruction">玩法：請按照職位「由高至低」的順序，依次點擊下方按鈕將其排入清單中。</p>
+        <div class="sort-area" id="sort-result"></div>
+        <div id="sort-options" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+            <button class="item-btn" style="width:auto;" onclick="selectSort('主任', this)">主任</button>
+            <button class="item-btn" style="width:auto;" onclick="selectSort('廠長', this)">廠長</button>
+            <button class="item-btn" style="width:auto;" onclick="selectSort('領班', this)">領班</button>
+            <button class="item-btn" style="width:auto;" onclick="selectSort('副理', this)">副理</button>
+            <button class="item-btn" style="width:auto;" onclick="selectSort('組長', this)">組長</button>
+        </div>
+        <button class="action-btn" onclick="checkSort()">提交檢查</button>
+        <button class="action-btn" style="background:#64748b;" onclick="resetSort()">重設</button>
+        <div id="fb-sort" class="feedback"></div>
+    </div>
+
+    <!-- 活動五：稱呼闖關 -->
+    <div id="sec5" class="section">
+        <h2>活動五：商務社交稱呼闖關</h2>
+        <p class="instruction">玩法：根據情境選出最得體的內地職場稱呼方式。</p>
+        
+        <div class="quiz-question">
+            <p><strong>情境 1：</strong>你在晚宴上遇到 B 公司的副總經理黃曉銘，而總經理陳之楓不在一塊兒。你應該怎樣稱呼黃曉銘？</p>
+            <button class="quiz-option" onclick="checkQ5(1, this, false, '答錯了！他可能不喜歡別人注意到他是「副」總經理。')">A. 黃副總經理</button>
+            <button class="quiz-option" onclick="checkQ5(1, this, true, '正確！內地稱呼講求「就高不就低」，總經理不在場時應尊稱黃總經理。')">B. 黃總經理</button>
+            <button class="quiz-option" onclick="checkQ5(1, this, false, '答錯了！商務場合直呼其名顯得不夠尊重。')">C. 曉銘哥</button>
+            <div id="fb-q5-1" class="feedback"></div>
+        </div>
+
+        <div class="quiz-question">
+            <p><strong>情境 2：</strong>你在酒會上遇到 C 公司的總經理陳炎梅和副總經理王志軍（兩人站在一起）。你應該怎樣稱呼他們？</p>
+            <button class="quiz-option" onclick="checkQ5(2, this, false, '答錯了！這樣會讓正職總經理不高興，且容易混淆。')">A. 兩位總經理好</button>
+            <button class="quiz-option" onclick="checkQ5(2, this, true, '正確！正副職同場時，必須精準區分，以免令「陳總經理」不高興。')">B. 陳總經理、王副總經理</button>
+            <div id="fb-q5-2" class="feedback"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tab Logic
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === (tabId - 1)));
+        document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === (tabId - 1)));
+    }
+
+    // Activity 1 Logic (Match)
+    const matchData = [
+        { short: '滬', full: '上海市' }, { short: '冀', full: '河北省' },
+        { short: '豫', full: '河南省' }, { short: '湘', full: '湖南省' },
+        { short: '粵', full: '廣東省' }
+    ];
+    let selectedLeft = null, selectedRight = null;
+    
+    function initMatch() {
+        const leftDiv = document.getElementById('match-left');
+        const rightDiv = document.getElementById('match-right');
+        const leftItems = [...matchData].sort(() => Math.random() - 0.5);
+        const rightItems = [...matchData].sort(() => Math.random() - 0.5);
+        
+        leftItems.forEach(item => {
+            let btn = document.createElement('button');
+            btn.className = 'item-btn left-btn'; btn.innerText = item.short;
+            btn.onclick = () => handleMatchClick(btn, 'left', item.full);
+            leftDiv.appendChild(btn);
+        });
+        
+        rightItems.forEach(item => {
+            let btn = document.createElement('button');
+            btn.className = 'item-btn right-btn'; btn.innerText = item.full;
+            btn.onclick = () => handleMatchClick(btn, 'right', item.full);
+            rightDiv.appendChild(btn);
+        });
+    }
+
+    function handleMatchClick(btn, side, value) {
+        if(btn.classList.contains('matched')) return;
+        document.querySelectorAll(`.${side}-btn`).forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        
+        if(side === 'left') { selectedLeft = { btn, value }; } 
+        else { selectedRight = { btn, value }; }
+
+        if(selectedLeft && selectedRight) {
+            if(selectedLeft.value === selectedRight.value) {
+                selectedLeft.btn.classList.add('matched');
+                selectedRight.btn.classList.add('matched');
+                selectedLeft.btn.classList.remove('selected');
+                selectedRight.btn.classList.remove('selected');
+                document.getElementById('match-feedback').className = 'feedback success';
+                document.getElementById('match-feedback').innerText = '配對成功！';
+            } else {
+                selectedLeft.btn.classList.remove('selected');
+                selectedRight.btn.classList.remove('selected');
+                document.getElementById('match-feedback').className = 'feedback error';
+                document.getElementById('match-feedback').innerText = '配對錯誤，請重試！';
+            }
+            selectedLeft = null; selectedRight = null;
+        }
+    }
+
+    // Activity 2 Logic (Flashcards)
+    const flashcardData = [
+        { q: 'Book房', a: '預訂房間' }, { q: 'Walk-in', a: '無預訂散客' },
+        { q: 'Check-in', a: '登記入住' }, { q: 'Check-out', a: '退房' },
+        { q: '畀deposit', a: '預付押金' }, { q: 'Lobby', a: '大堂' }
+    ];
+    function initFlashcards() {
+        const container = document.getElementById('flashcards-container');
+        flashcardData.forEach(item => {
+            let card = document.createElement('div');
+            card.className = 'flashcard';
+            card.innerHTML = `
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">${item.q}</div>
+                    <div class="flashcard-back">${item.a}</div>
+                </div>`;
+            card.onclick = () => card.classList.toggle('flipped');
+            container.appendChild(card);
+        });
+    }
+
+    // Activity 3 Logic (Quiz)
+    function checkQ3(btn, isCorrect) {
+        let parent = btn.parentElement;
+        parent.querySelectorAll('.quiz-option').forEach(b => b.style.opacity = '0.5');
+        btn.style.opacity = '1';
+        let fb = document.getElementById('fb-q3');
+        if(isCorrect) {
+            fb.className = 'feedback success'; fb.innerText = '正確！北京地鐵嚴禁進入隧道及跳下月台。';
+        } else {
+            fb.className = 'feedback error'; fb.innerText = '答錯了，請再仔細看看標識文字！';
+        }
+    }
+
+    // Activity 4 Logic (Sort)
+    let sortArray = [];
+    const correctSort = ['廠長', '副理', '主任', '組長', '領班'];
+    
+    function selectSort(val, btn) {
+        if(btn.classList.contains('disabled')) return;
+        sortArray.push(val);
+        btn.classList.add('disabled');
+        renderSortArea();
+    }
+    
+    function renderSortArea() {
+        const area = document.getElementById('sort-result');
+        area.innerHTML = '';
+        sortArray.forEach((val, idx) => {
+            let div = document.createElement('div');
+            div.className = 'sort-item';
+            div.innerText = `${idx + 1}. ${val}`;
+            area.appendChild(div);
+        });
+    }
+
+    function resetSort() {
+        sortArray = [];
+        renderSortArea();
+        document.querySelectorAll('#sort-options .item-btn').forEach(btn => btn.classList.remove('disabled'));
+        document.getElementById('fb-sort').style.display = 'none';
+    }
+
+    function checkSort() {
+        let fb = document.getElementById('fb-sort');
+        if(sortArray.length < 5) {
+            fb.className = 'feedback error'; fb.innerText = '請先排完所有職位！'; return;
+        }
+        if(JSON.stringify(sortArray) === JSON.stringify(correctSort)) {
+            fb.className = 'feedback success'; fb.innerText = '完全正確！職級由高至低為：廠長 > 副理 > 主任 > 組長 > 領班。';
+        } else {
+            fb.className = 'feedback error'; fb.innerText = '排序有誤，請點擊「重設」再試一次！';
+        }
+    }
+
+    // Activity 5 Logic (Scenario)
+    function checkQ5(qNum, btn, isCorrect, msg) {
+        let parent = btn.parentElement;
+        parent.querySelectorAll('.quiz-option').forEach(b => b.style.opacity = '0.5');
+        btn.style.opacity = '1';
+        let fb = document.getElementById(`fb-q5-${qNum}`);
+        fb.className = isCorrect ? 'feedback success' : 'feedback error';
+        fb.innerText = msg;
+    }
+
+    // Initialize all
+    window.onload = () => { initMatch(); initFlashcards(); };
+</script>
+
+</body>
+</html>
